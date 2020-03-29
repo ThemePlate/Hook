@@ -45,6 +45,13 @@ class Hook {
 	}
 
 
+	public static function once( $action, $tag, $value, $priority = 10 ) {
+
+		return self::handler( 'once', $tag, compact( 'action', 'value', 'priority' ), $priority );
+
+	}
+
+
 	private static function handler( $action, $tag, $value, $priority ) {
 
 		return add_filter( $tag, array( new Handler( $value ), $action ), $priority );

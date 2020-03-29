@@ -84,4 +84,17 @@ class Handler {
 
 	}
 
+
+	public function once( $values ) {
+
+		$action = $this->data['action'];
+
+		remove_filter( current_filter(), array( $this, __FUNCTION__ ), $this->data['priority'] );
+
+		$this->data = $this->data['value'];
+
+		return $this->$action( $values );
+
+	}
+
 }
