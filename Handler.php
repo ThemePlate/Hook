@@ -21,6 +21,13 @@ class Handler {
 	}
 
 
+	public function return( $values ) {
+
+		return $this->data;
+
+	}
+
+
 	public function append( $values ) {
 
 		$values[] = $this->data;

@@ -11,6 +11,12 @@ namespace ThemePlate;
 
 class Hook {
 
+	public static function return( $tag, $value, $priority = 10 ) {
+
+		return self::handler( 'return', $tag, $value, $priority );
+
+	}
+
 	public static function append( $tag, $value, $priority = 10 ) {
 
 		return self::handler( 'append', $tag, $value, $priority );
