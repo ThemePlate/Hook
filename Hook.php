@@ -11,37 +11,37 @@ namespace ThemePlate;
 
 class Hook {
 
-	public static function append( $tag, $value ) {
+	public static function append( $tag, $value, $priority = 10 ) {
 
-		return self::handler( 'append', $tag, $value );
-
-	}
-
-
-	public static function prepend( $tag, $value ) {
-
-		return self::handler( 'prepend', $tag, $value );
+		return self::handler( 'append', $tag, $value, $priority );
 
 	}
 
 
-	public static function pluck( $tag, $value ) {
+	public static function prepend( $tag, $value, $priority = 10 ) {
 
-		return self::handler( 'pluck', $tag, $value );
-
-	}
-
-
-	public static function replace( $tag, $old, $new ) {
-
-		return self::handler( 'replace', $tag, compact( 'old', 'new' ) );
+		return self::handler( 'prepend', $tag, $value, $priority );
 
 	}
 
 
-	private static function handler( $action, $tag, $value ) {
+	public static function pluck( $tag, $value, $priority = 10 ) {
 
-		return add_filter( $tag, array( new Handler( $value ), $action ) );
+		return self::handler( 'pluck', $tag, $value, $priority );
+
+	}
+
+
+	public static function replace( $tag, $old, $new, $priority = 10 ) {
+
+		return self::handler( 'replace', $tag, compact( 'old', 'new' ), $priority );
+
+	}
+
+
+	private static function handler( $action, $tag, $value, $priority ) {
+
+		return add_filter( $tag, array( new Handler( $value ), $action ), $priority );
 
 	}
 
