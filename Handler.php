@@ -30,7 +30,11 @@ class Handler {
 
 	public function append( $values ) {
 
-		$values[] = $this->data;
+		if ( is_array( $values ) ) {
+			$values[] = $this->data;
+		} else {
+			$values .= $this->data;
+		}
 
 		return $values;
 
@@ -39,7 +43,11 @@ class Handler {
 
 	public function prepend( $values ) {
 
-		array_unshift( $values, $this->data );
+		if ( is_array( $values ) ) {
+			array_unshift( $values, $this->data );
+		} else {
+			$values = $this->data . $values;
+		}
 
 		return $values;
 
@@ -48,9 +56,13 @@ class Handler {
 
 	public function pluck( $values ) {
 
-		$index = array_search( $this->data, $values );
+		if ( is_array( $values ) ) {
+			$index = array_search( $this->data, $values );
 
-		unset( $values[ $index ] );
+			unset( $values[ $index ] );
+		} else {
+			$values = str_replace( $this->data, '', $values );
+		}
 
 		return $values;
 
@@ -59,9 +71,14 @@ class Handler {
 
 	public function replace( $values ) {
 
-		$index = array_search( $this->data['old'], $values );
+		if ( is_array( $values ) ) {
+			$index = array_search( $this->data['old'], $values );
 
-		$values[ $index ] = $this->data['new'];
+			$values[ $index ] = $this->data['new'];
+		} else {
+			$values = str_replace( $this->data['old'], $this->data['new'], $values );
+		}
+
 
 		return $values;
 
