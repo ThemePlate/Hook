@@ -40,7 +40,7 @@ class Hook {
 
 	public static function replace( $tag, $old, $new, $priority = 10 ) {
 
-		return self::handler( 'replace', $tag, compact( 'old', 'new' ), $priority );
+		return self::handler( 'replace', $tag, array( $old, $new ), $priority );
 
 	}
 

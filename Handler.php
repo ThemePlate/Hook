@@ -72,11 +72,11 @@ class Handler {
 	public function replace( $values ) {
 
 		if ( is_array( $values ) ) {
-			$index = array_search( $this->data['old'], $values );
+			$index = array_search( $this->data[0], $values );
 
-			$values[ $index ] = $this->data['new'];
+			$values[ $index ] = $this->data[1];
 		} else {
-			$values = str_replace( $this->data['old'], $this->data['new'], $values );
+			$values = str_replace( $this->data[0], $this->data[1], $values );
 		}
 
 
