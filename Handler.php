@@ -21,7 +21,7 @@ class Handler {
 	}
 
 
-	public function return( $values ) {
+	public function return() {
 
 		return $this->data;
 
@@ -94,6 +94,35 @@ class Handler {
 		$this->data = $this->data['value'];
 
 		return $this->$action( $values );
+
+	}
+
+
+	public function remove( $tag ) {
+
+		global $wp_filter;
+
+		extract( $this->data );
+
+		$retval = false;
+
+		if ( ! isset( $wp_filter[ $tag ], $wp_filter[ $tag ][ $priority ] ) ) {
+			return $retval;
+		}
+
+		foreach ( $wp_filter[ $tag ][ $priority ] as $idx => $filter ) {
+			if ( ! is_array( $filter['function'] ) || ! $filter['function'][0] instanceof \ThemePlate\Handler ) {
+				continue;
+			}
+
+			if ( $action === $filter['function'][1] && $value === $filter['function'][0]->return() ) {
+				$retval = true;
+
+				unset( $wp_filter[ $tag ]->callbacks[ $priority ][ $idx ] );
+			}
+		}
+
+		return $retval;
 
 	}
 
