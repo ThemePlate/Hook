@@ -85,6 +85,20 @@ class Handler {
 	}
 
 
+	public function insert( $values ) {
+
+		if ( is_array( $values ) ) {
+			array_splice( $values, $this->data[1], 0, $this->data[0] );
+		} else {
+			$values = substr_replace( $values, $this->data[0], $this->data[1], 0 );
+		}
+
+
+		return $values;
+
+	}
+
+
 	public function once( $values ) {
 
 		$action = array_shift( $this->data['value'] );

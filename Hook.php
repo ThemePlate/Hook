@@ -45,6 +45,13 @@ class Hook {
 	}
 
 
+	public static function insert( $tag, $value, $position, $priority = 10 ) {
+
+		return self::handler( 'insert', $tag, array( $value, $position ), $priority );
+
+	}
+
+
 	public static function once( $tag, $value, $priority = 10 ) {
 
 		return self::handler( 'once', $tag, compact( 'value', 'priority' ), $priority );
