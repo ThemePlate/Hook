@@ -45,9 +45,9 @@ class Hook {
 	}
 
 
-	public static function once( $action, $tag, $value, $priority = 10 ) {
+	public static function once( $tag, $value, $priority = 10 ) {
 
-		return self::handler( 'once', $tag, compact( 'action', 'value', 'priority' ), $priority );
+		return self::handler( 'once', $tag, compact( 'value', 'priority' ), $priority );
 
 	}
 
