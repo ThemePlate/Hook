@@ -110,6 +110,12 @@ class Handler {
 			return $retval;
 		}
 
+		$action = array_shift( $value );
+
+		if ( 1 === count( $value ) ) {
+			$value = $value[0];
+		}
+
 		foreach ( $wp_filter[ $tag ][ $priority ] as $idx => $filter ) {
 			if ( ! is_array( $filter['function'] ) || ! $filter['function'][0] instanceof \ThemePlate\Handler ) {
 				continue;

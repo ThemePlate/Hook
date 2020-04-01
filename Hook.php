@@ -52,9 +52,9 @@ class Hook {
 	}
 
 
-	public static function remove( $action, $tag, $value, $priority = 10 ) {
+	public static function remove( $tag, $value, $priority = 10 ) {
 
-		$handler = new Handler( compact( 'action', 'value', 'priority' ) );
+		$handler = new Handler( compact( 'value', 'priority' ) );
 
 		return $handler->remove( $tag );
 
