@@ -57,7 +57,7 @@ class Handler {
 	public function pluck( $values ) {
 
 		if ( is_array( $values ) ) {
-			$index = array_search( $this->data, $values );
+			$index = array_search( $this->data, $values, true );
 
 			if ( false !== $index ) {
 				unset( $values[ $index ] );
@@ -74,7 +74,7 @@ class Handler {
 	public function replace( $values ) {
 
 		if ( is_array( $values ) ) {
-			$index = array_search( $this->data[0], $values );
+			$index = array_search( $this->data[0], $values, true );
 
 			if ( false !== $index ) {
 				$values[ $index ] = $this->data[1];
@@ -82,7 +82,6 @@ class Handler {
 		} else {
 			$values = str_replace( $this->data[0], $this->data[1], $values );
 		}
-
 
 		return $values;
 
@@ -96,7 +95,6 @@ class Handler {
 		} else {
 			$values = substr_replace( $values, $this->data[0], $this->data[1], 0 );
 		}
-
 
 		return $values;
 
