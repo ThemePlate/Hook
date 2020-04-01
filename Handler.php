@@ -111,6 +111,10 @@ class Handler {
 
 		$this->data = $this->data['value'];
 
+		if ( 1 === count( $this->data ) ) {
+			$this->data = $this->data[0];
+		}
+
 		return $this->$action( $values );
 
 	}
