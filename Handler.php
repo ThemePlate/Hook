@@ -59,7 +59,9 @@ class Handler {
 		if ( is_array( $values ) ) {
 			$index = array_search( $this->data, $values );
 
-			unset( $values[ $index ] );
+			if ( false !== $index ) {
+				unset( $values[ $index ] );
+			}
 		} else {
 			$values = str_replace( $this->data, '', $values );
 		}
@@ -74,7 +76,9 @@ class Handler {
 		if ( is_array( $values ) ) {
 			$index = array_search( $this->data[0], $values );
 
-			$values[ $index ] = $this->data[1];
+			if ( false !== $index ) {
+				$values[ $index ] = $this->data[1];
+			}
 		} else {
 			$values = str_replace( $this->data[0], $this->data[1], $values );
 		}
