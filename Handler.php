@@ -137,7 +137,7 @@ class Handler {
 		}
 
 		foreach ( $wp_filter[ $tag ][ $priority ] as $idx => $filter ) {
-			if ( ! is_array( $filter['function'] ) || ! $filter['function'][0] instanceof \ThemePlate\Handler ) {
+			if ( ! is_array( $filter['function'] ) || ! $filter['function'][0] instanceof Handler ) {
 				continue;
 			}
 
