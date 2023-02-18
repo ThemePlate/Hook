@@ -7,13 +7,19 @@
  * @since 0.1.0
  */
 
-namespace ThemePlate;
+namespace ThemePlate\Hook;
 
 class Handler {
 
+	/**
+	 * @var mixed
+	 */
 	private $data;
 
 
+	/**
+	 * @param $data mixed
+	 */
 	public function __construct( $data ) {
 
 		$this->data = $data;
@@ -28,6 +34,10 @@ class Handler {
 	}
 
 
+	/**
+	 * @param $values array|string
+	 * @return array|string
+	 */
 	public function append( $values ) {
 
 		if ( is_array( $values ) ) {
@@ -41,6 +51,10 @@ class Handler {
 	}
 
 
+	/**
+	 * @param $values array|string
+	 * @return array|string
+	 */
 	public function prepend( $values ) {
 
 		if ( is_array( $values ) ) {
@@ -54,6 +68,10 @@ class Handler {
 	}
 
 
+	/**
+	 * @param $values array|string
+	 * @return array|string
+	 */
 	public function pluck( $values ) {
 
 		if ( is_array( $values ) ) {
@@ -71,6 +89,10 @@ class Handler {
 	}
 
 
+	/**
+	 * @param $values array|string
+	 * @return array|string
+	 */
 	public function replace( $values ) {
 
 		if ( is_array( $values ) ) {
@@ -88,6 +110,10 @@ class Handler {
 	}
 
 
+	/**
+	 * @param $values array|string
+	 * @return array|string
+	 */
 	public function insert( $values ) {
 
 		if ( is_array( $values ) ) {
@@ -101,7 +127,11 @@ class Handler {
 	}
 
 
-	public function once( $values ) {
+	/**
+	 * @param $values array
+	 * @return array|string
+	 */
+	public function once( array $values ) {
 
 		$action = array_shift( $this->data['value'] );
 
@@ -118,13 +148,13 @@ class Handler {
 	}
 
 
-	public function remove( $tag ) {
+	public function remove( string $tag ): bool {
 
 		global $wp_filter;
 
-		extract( $this->data );
-
-		$retval = false;
+		$value    = $this->data['value'];
+		$priority = $this->data['priority'];
+		$retval   = false;
 
 		if ( ! isset( $wp_filter[ $tag ], $wp_filter[ $tag ][ $priority ] ) ) {
 			return $retval;

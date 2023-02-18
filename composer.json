@@ -1,19 +1,40 @@
 {
-    "name": "themeplate/hook",
-    "description" : "Advanced wrapper for filters",
-    "license": "GPL-3.0",
-    "authors": [
-        {
-            "name": "Gene Alyson Fortunado Torcende",
-            "email": "genealyson.torcende@gmail.com"
-        }
-    ],
-    "require": {
-        "php": "^7.2|^8.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "ThemePlate\\": ""
-        }
-    }
+	"name": "themeplate/hook",
+	"description" : "Advanced wrapper for filters",
+	"license": "GPL-3.0-only",
+	"authors": [
+		{
+			"name": "Gene Alyson Fortunado Torcende",
+			"email": "genealyson.torcende@gmail.com"
+		}
+	],
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"optimize-autoloader": true,
+		"preferred-install": "dist",
+		"sort-packages": true
+	},
+	"require": {
+		"php": "^7.2|^8.0"
+	},
+	"require-dev": {
+		"themeplate/tester": "^2.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"ThemePlate\\Hook\\": "src"
+		},
+		"files": [
+			"Hook.php"
+		]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests"
+		}
+	}
 }
