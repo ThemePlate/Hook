@@ -172,7 +172,7 @@ class Handler {
 			}
 
 			if ( ( $action === $filter['function'][1] && $value === $filter['function'][0]->return() ) ||
-				( 'once' === $filter['function'][1] && $value === $filter['function'][0]->return()['value'] ) ) {
+				( 'once' === $filter['function'][1] && $value === $filter['function'][0]->return()['value'][1] ) ) {
 				$retval = true;
 
 				unset( $wp_filter[ $tag ]->callbacks[ $priority ][ $idx ] );

@@ -143,4 +143,52 @@ class HandlerTest extends WP_UnitTestCase {
 
 		$this->assertSame( $expected, apply_filters( self::HOOK, $initial ) );
 	}
+
+	public function for_once_and_remove(): array {
+		return array(
+			array(
+				array( 'initial' ),
+				array(
+					'value'    => array( 'return', array( 'this' ) ),
+					'priority' => 10,
+				),
+				array( 'this' ),
+			),
+			array(
+				array( 'initial', 'values' ),
+				array(
+					'value'    => array( 'insert', array( 'default', 1 ) ),
+					'priority' => 10,
+				),
+				array( 'initial', 'default', 'values' ),
+			),
+		);
+	}
+
+	/** @dataProvider for_once_and_remove */
+	public function test_once( $initial, $wanted, $expected ) {
+		add_filter( self::HOOK, array( new Handler( $wanted ), 'once' ) );
+
+		$this->assertSame( $expected, apply_filters( self::HOOK, $initial ) );
+		$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
+		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
+	}
+
+	/** @dataProvider for_once_and_remove */
+	public function test_remove_with_once( $initial, $wanted, $expected ) {
+		add_filter( self::HOOK, array( new Handler( $wanted ), 'once' ) );
+		( new Handler( $wanted ) )->remove( self::HOOK );
+
+		$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
+		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
+	}
+
+	/** @dataProvider for_once_and_remove */
+	public function test_remove_with_others( $initial, $wanted, $expected ) {
+		add_filter( self::HOOK, array( new Handler( $wanted['value'][1] ), $wanted['value'][0] ) );
+		( new Handler( $wanted ) )->remove( self::HOOK );
+
+		$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
+		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
+	}
 }
