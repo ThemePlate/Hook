@@ -128,10 +128,10 @@ class Handler {
 
 
 	/**
-	 * @param $values array
+	 * @param $values array|string
 	 * @return array|string
 	 */
-	public function once( array $values ) {
+	public function once( $values ) {
 
 		$action = array_shift( $this->data['value'] );
 

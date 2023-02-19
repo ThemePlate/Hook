@@ -12,6 +12,16 @@ use WP_UnitTestCase;
 class HandlerTest extends WP_UnitTestCase {
 	public const HOOK = 'test_hook';
 
+	public const ACTIONS = array(
+		'return',
+		'append',
+		'prepend',
+		'pluck',
+		'replace',
+		'insert',
+		'once',
+	);
+
 	public function for_return(): array {
 		return array(
 			array(
@@ -144,28 +154,28 @@ class HandlerTest extends WP_UnitTestCase {
 		$this->assertSame( $expected, apply_filters( self::HOOK, $initial ) );
 	}
 
-	public function for_once_and_remove(): array {
-		return array(
-			array(
-				array( 'initial' ),
-				array(
-					'value'    => array( 'return', array( 'this' ) ),
-					'priority' => 10,
-				),
-				array( 'this' ),
-			),
-			array(
-				array( 'initial', 'values' ),
-				array(
-					'value'    => array( 'insert', array( 'default', 1 ) ),
-					'priority' => 10,
-				),
-				array( 'initial', 'default', 'values' ),
-			),
-		);
+	public function for_once(): array {
+		$data = array();
+
+		foreach ( array_slice( self::ACTIONS, 0, -1 ) as $action ) {
+			$method = 'for_' . $action;
+			$data[] = array_map(
+				function( $value ) use ( $action ) {
+					$value[1] = array(
+						'value'    => array( $action, $value[1] ),
+						'priority' => 10,
+					);
+
+					return $value;
+				},
+				$this->$method()
+			);
+		}
+
+		return array_merge( ...$data );
 	}
 
-	/** @dataProvider for_once_and_remove */
+	/** @dataProvider for_once */
 	public function test_once( $initial, $wanted, $expected ) {
 		add_filter( self::HOOK, array( new Handler( $wanted ), 'once' ) );
 
@@ -174,19 +184,33 @@ class HandlerTest extends WP_UnitTestCase {
 		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
 	}
 
-	/** @dataProvider for_once_and_remove */
-	public function test_remove_with_once( $initial, $wanted, $expected ) {
-		add_filter( self::HOOK, array( new Handler( $wanted ), 'once' ) );
-		( new Handler( $wanted ) )->remove( self::HOOK );
+	public function for_remove(): array {
+		$data = array();
 
-		$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
-		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
+		foreach ( self::ACTIONS as $action ) {
+			$method = 'for_' . $action;
+			$data[] = array_map(
+				function( $value ) use ( $action ) {
+					array_unshift( $value, $action );
+
+					return $value;
+				},
+				$this->$method()
+			);
+		}
+
+		return array_merge( ...$data );
 	}
 
-	/** @dataProvider for_once_and_remove */
-	public function test_remove_with_others( $initial, $wanted, $expected ) {
-		add_filter( self::HOOK, array( new Handler( $wanted['value'][1] ), $wanted['value'][0] ) );
-		( new Handler( $wanted ) )->remove( self::HOOK );
+	/** @dataProvider for_remove */
+	public function test_remove( $action, $initial, $wanted, $expected ) {
+		add_filter( self::HOOK, array( new Handler( $wanted ), $action ) );
+		( new Handler(
+			array(
+				'value'    => array( $action, $wanted ),
+				'priority' => 10,
+			)
+		) )->remove( self::HOOK );
 
 		$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
 		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
