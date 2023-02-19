@@ -34,6 +34,11 @@ class HandlerTest extends WP_UnitTestCase {
 				array( 'test' ),
 				array( 'test' ),
 			),
+			array(
+				PHP_INT_MAX,
+				PHP_INT_MIN,
+				PHP_INT_MIN,
+			),
 		);
 	}
 
@@ -55,6 +60,11 @@ class HandlerTest extends WP_UnitTestCase {
 				array( 'initial' ),
 				'test',
 				array( 'initial', 'test' ),
+			),
+			array(
+				PHP_INT_MIN,
+				987,
+				PHP_INT_MIN,
 			),
 		);
 	}
@@ -78,6 +88,11 @@ class HandlerTest extends WP_UnitTestCase {
 				'test',
 				array( 'test', 'initial' ),
 			),
+			array(
+				PHP_FLOAT_MAX,
+				'123',
+				PHP_FLOAT_MAX,
+			),
 		);
 	}
 
@@ -100,6 +115,11 @@ class HandlerTest extends WP_UnitTestCase {
 				'values',
 				array( 'initial' ),
 			),
+			array(
+				PHP_FLOAT_MIN,
+				array( 987 ),
+				PHP_FLOAT_MIN,
+			),
 		);
 	}
 
@@ -111,6 +131,8 @@ class HandlerTest extends WP_UnitTestCase {
 	}
 
 	public function for_replace(): array {
+		$object = new \stdClass();
+
 		return array(
 			array(
 				'initial',
@@ -121,6 +143,11 @@ class HandlerTest extends WP_UnitTestCase {
 				array( 'initial', 'values' ),
 				array( 'initial', 'final' ),
 				array( 'final', 'values' ),
+			),
+			array(
+				$object,
+				true,
+				$object,
 			),
 		);
 	}
@@ -143,6 +170,11 @@ class HandlerTest extends WP_UnitTestCase {
 				array( 'initial', 'values' ),
 				array( 'default', 1 ),
 				array( 'initial', 'default', 'values' ),
+			),
+			array(
+				true,
+				null,
+				true,
 			),
 		);
 	}
@@ -180,7 +212,11 @@ class HandlerTest extends WP_UnitTestCase {
 		add_filter( self::HOOK, array( new Handler( $wanted ), 'once' ) );
 
 		$this->assertSame( $expected, apply_filters( self::HOOK, $initial ) );
-		$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
+
+		if ( is_string( $initial ) || is_array( $initial ) ) {
+			$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
+		}
+
 		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
 	}
 
@@ -212,7 +248,10 @@ class HandlerTest extends WP_UnitTestCase {
 			)
 		) )->remove( self::HOOK );
 
-		$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
+		if ( is_string( $initial ) || is_array( $initial ) ) {
+			$this->assertNotSame( $expected, apply_filters( self::HOOK, $initial ) );
+		}
+
 		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
 	}
 }

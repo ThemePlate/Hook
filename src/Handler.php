@@ -42,7 +42,7 @@ class Handler {
 
 		if ( is_array( $values ) ) {
 			$values[] = $this->data;
-		} else {
+		} elseif ( is_string( $values ) ) {
 			$values .= $this->data;
 		}
 
@@ -59,7 +59,7 @@ class Handler {
 
 		if ( is_array( $values ) ) {
 			array_unshift( $values, $this->data );
-		} else {
+		} elseif ( is_string( $values ) ) {
 			$values = $this->data . $values;
 		}
 
@@ -80,7 +80,7 @@ class Handler {
 			if ( false !== $index ) {
 				unset( $values[ $index ] );
 			}
-		} else {
+		} elseif ( is_string( $values ) ) {
 			$values = str_replace( $this->data, '', $values );
 		}
 
@@ -101,7 +101,7 @@ class Handler {
 			if ( false !== $index ) {
 				$values[ $index ] = $this->data[1];
 			}
-		} else {
+		} elseif ( is_string( $values ) ) {
 			$values = str_replace( $this->data[0], $this->data[1], $values );
 		}
 
@@ -118,7 +118,7 @@ class Handler {
 
 		if ( is_array( $values ) ) {
 			array_splice( $values, $this->data[1], 0, $this->data[0] );
-		} else {
+		} elseif ( is_string( $values ) ) {
 			$values = substr_replace( $values, $this->data[0], $this->data[1], 0 );
 		}
 
