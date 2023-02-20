@@ -6,6 +6,7 @@
 
 namespace Tests;
 
+use stdClass;
 use ThemePlate\Hook\Handler;
 use WP_UnitTestCase;
 
@@ -131,7 +132,7 @@ class HandlerTest extends WP_UnitTestCase {
 	}
 
 	public function for_replace(): array {
-		$object = new \stdClass();
+		$object = new stdClass();
 
 		return array(
 			array(

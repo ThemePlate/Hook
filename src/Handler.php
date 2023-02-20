@@ -9,6 +9,8 @@
 
 namespace ThemePlate\Hook;
 
+use Closure;
+
 class Handler {
 
 	/**
@@ -160,34 +162,44 @@ class Handler {
 
 		global $wp_filter;
 
-		$value    = $this->data['value'];
-		$priority = $this->data['priority'];
-		$retval   = false;
+		$wanted_value    = $this->data['value'];
+		$wanted_priority = $this->data['priority'];
 
-		if ( ! isset( $wp_filter[ $tag ], $wp_filter[ $tag ][ $priority ] ) ) {
-			return $retval;
+		if ( ! isset( $wp_filter[ $tag ], $wp_filter[ $tag ][ $wanted_priority ] ) ) {
+			return false;
 		}
 
-		$action = array_shift( $value );
+		$wanted_action = array_shift( $wanted_value );
+		$is_successful = false;
 
-		if ( 1 === count( $value ) ) {
-			$value = $value[0];
+		if ( 1 === count( $wanted_value ) ) {
+			$wanted_value = $wanted_value[0];
 		}
 
-		foreach ( $wp_filter[ $tag ][ $priority ] as $idx => $filter ) {
-			if ( ! is_array( $filter['function'] ) || ! $filter['function'][0] instanceof self ) {
+		foreach ( $wp_filter[ $tag ][ $wanted_priority ] as $idx => $filter ) {
+			if (
+				! is_callable( $filter['function'] ) ||
+				$filter['function'] instanceof Closure ||
+				! $filter['function'][0] instanceof self
+			) {
 				continue;
 			}
 
-			if ( ( $action === $filter['function'][1] && $value === $filter['function'][0]->return() ) ||
-				( 'once' === $filter['function'][1] && $value === $filter['function'][0]->return()['value'][1] ) ) {
-				$retval = true;
+			$filter_instance = $filter['function'][0];
+			$filter_action   = $filter['function'][1];
+			$filter_data     = $filter_instance->return();
 
-				unset( $wp_filter[ $tag ]->callbacks[ $priority ][ $idx ] );
+			if (
+				( $wanted_action === $filter_action && $wanted_value === $filter_data ) ||
+				( 'once' === $filter_action && $wanted_value === $filter_data['value'][1] )
+			) {
+				$is_successful = true;
+
+				unset( $wp_filter[ $tag ]->callbacks[ $wanted_priority ][ $idx ] );
 			}
 		}
 
-		return $retval;
+		return $is_successful;
 
 	}
 
