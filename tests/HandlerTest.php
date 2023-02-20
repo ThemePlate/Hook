@@ -254,4 +254,27 @@ class HandlerTest extends WP_UnitTestCase {
 
 		$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
 	}
+
+	public function for_incomplete_once_remove(): array {
+		return array(
+			array( 'once' ),
+			array( 'remove' ),
+		);
+	}
+
+	/** @dataProvider for_incomplete_once_remove */
+	public function test_incomplete_once_remove( string $action ): void {
+		$initial = 'test';
+		$wanted  = 'this';
+
+		add_filter( self::HOOK, array( new Handler( $wanted ), $action ) );
+
+		$this->assertNotSame( $wanted, apply_filters( self::HOOK, $initial ) );
+
+		if ( 'once' === $action ) {
+			$this->assertSame( $initial, apply_filters( self::HOOK, $initial ) );
+		} else {
+			$this->assertFalse( ( new Handler( $wanted ) )->remove( self::HOOK ) );
+		}
+	}
 }

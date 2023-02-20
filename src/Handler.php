@@ -133,6 +133,10 @@ class Handler {
 	 */
 	public function once( $values ) {
 
+		if ( ! isset( $this->data['value'], $this->data['priority'] ) ) {
+			return $values;
+		}
+
 		$action = array_shift( $this->data['value'] );
 
 		remove_filter( current_filter(), array( $this, __FUNCTION__ ), $this->data['priority'] );
@@ -149,6 +153,10 @@ class Handler {
 
 
 	public function remove( string $tag ): bool {
+
+		if ( ! isset( $this->data['value'], $this->data['priority'] ) ) {
+			return false;
+		}
 
 		global $wp_filter;
 
