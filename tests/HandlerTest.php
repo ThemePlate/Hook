@@ -183,6 +183,16 @@ class HandlerTest extends WP_UnitTestCase {
 				'final',
 			),
 			array(
+				'tester',
+				array( array( 'er' ), null ),
+				'test',
+			),
+			array(
+				'test123ingthis',
+				array( array( 123, 'ing' ), array( true, false ) ),
+				'test1this',
+			),
+			array(
 				array( 'initial', 'values' ),
 				array( 'initial', 'final' ),
 				array( 'final', 'values' ),
@@ -208,6 +218,16 @@ class HandlerTest extends WP_UnitTestCase {
 				'initial',
 				array( 's cruc', '4' ),
 				'inits crucial',
+			),
+			array(
+				'test',
+				array( 'a ', null ),
+				'a test',
+			),
+			array(
+				'test',
+				array( (object) array(), true ),
+				't{}est',
 			),
 			array(
 				array( 'initial', 'values' ),

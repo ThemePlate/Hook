@@ -36,9 +36,7 @@ class Handler {
 	}
 
 
-	public function stringy_data(): string {
-
-		$data = $this->data;
+	protected function stringify( $data ): string {
 
 		if ( is_scalar( $data ) || null === $data ) {
 			$data = (string) $data;
@@ -48,6 +46,19 @@ class Handler {
 		}
 
 		return $data;
+
+	}
+
+
+	public function stringy_data( $key = null ): string {
+
+		$data = $this->data;
+
+		if ( null !== $key && array_key_exists( $key, $data ) ) {
+			$data = $data[ $key ];
+		}
+
+		return $this->stringify( $data );
 
 	}
 
@@ -120,7 +131,10 @@ class Handler {
 				$values[ $index ] = $this->data[1];
 			}
 		} elseif ( is_string( $values ) ) {
-			$values = str_replace( $this->data[0], $this->data[1], $values );
+			$search  = is_array( $this->data[0] ) ? array_map( array( $this, 'stringify' ), $this->data[0] ) : $this->stringy_data( 0 );
+			$replace = is_array( $this->data[1] ) ? array_map( array( $this, 'stringify' ), $this->data[1] ) : $this->stringy_data( 1 );
+
+			$values = str_replace( $search, $replace, $values );
 		}
 
 		return $values;
@@ -137,7 +151,9 @@ class Handler {
 		if ( is_array( $values ) ) {
 			array_splice( $values, $this->data[1], 0, $this->data[0] );
 		} elseif ( is_string( $values ) ) {
-			$values = substr_replace( $values, $this->data[0], $this->data[1], 0 );
+			$replace = is_array( $this->data[0] ) ? array_map( array( $this, 'stringify' ), $this->data[0] ) : $this->stringy_data( 0 );
+
+			$values = substr_replace( $values, $replace, (int) $this->data[1], 0 );
 		}
 
 		return $values;
