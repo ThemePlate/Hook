@@ -23,6 +23,48 @@ class HandlerTest extends WP_UnitTestCase {
 		'once',
 	);
 
+	public function for_stringy_data(): array {
+		return array(
+			array(
+				array(),
+				'[]',
+			),
+			array(
+				(object) array(),
+				'{}',
+			),
+			array(
+				true,
+				'1',
+			),
+			array(
+				false,
+				'',
+			),
+			array(
+				0,
+				'0',
+			),
+			array(
+				123,
+				'123',
+			),
+			array(
+				456.789,
+				'456.789',
+			),
+			array(
+				null,
+				'',
+			),
+		);
+	}
+
+	/** @dataProvider for_stringy_data */
+	public function test_stringy_data( $value, string $expected ): void {
+		$this->assertSame( $expected, ( new Handler( $value ) )->stringy_data() );
+	}
+
 	public function for_return(): array {
 		return array(
 			array(

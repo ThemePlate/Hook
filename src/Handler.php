@@ -36,6 +36,22 @@ class Handler {
 	}
 
 
+	public function stringy_data(): string {
+
+		$data = $this->data;
+
+		if ( is_scalar( $data ) || null === $data ) {
+			$data = (string) $data;
+		} else {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
+			$data = json_encode( $data );
+		}
+
+		return $data;
+
+	}
+
+
 	/**
 	 * @param $values array|string
 	 * @return array|string
@@ -45,7 +61,7 @@ class Handler {
 		if ( is_array( $values ) ) {
 			$values[] = $this->data;
 		} elseif ( is_string( $values ) ) {
-			$values .= $this->data;
+			$values .= $this->stringy_data();
 		}
 
 		return $values;
@@ -62,7 +78,7 @@ class Handler {
 		if ( is_array( $values ) ) {
 			array_unshift( $values, $this->data );
 		} elseif ( is_string( $values ) ) {
-			$values = $this->data . $values;
+			$values = $this->stringy_data() . $values;
 		}
 
 		return $values;
@@ -83,7 +99,7 @@ class Handler {
 				unset( $values[ $index ] );
 			}
 		} elseif ( is_string( $values ) ) {
-			$values = str_replace( $this->data, '', $values );
+			$values = str_replace( $this->stringy_data(), '', $values );
 		}
 
 		return $values;
