@@ -42,19 +42,6 @@ class Handler {
 	}
 
 
-	public function stringy_data( $key = null ): string {
-
-		$data = $this->data;
-
-		if ( null !== $key && array_key_exists( $key, $data ) ) {
-			$data = $data[ $key ];
-		}
-
-		return Helper::stringify( $data );
-
-	}
-
-
 	/**
 	 * @param $values array|string
 	 * @return array|string
