@@ -7,6 +7,7 @@
 namespace Tests;
 
 use Brain\Monkey;
+use Error;
 use PHPUnit\Framework\TestCase;
 use ThemePlate\Hook;
 use ThemePlate\Hook\Handler;
@@ -27,6 +28,12 @@ class HookTest extends TestCase {
 	protected function tearDown(): void {
 		Monkey\tearDown();
 		parent::tearDown();
+	}
+
+	public function test_unknown_action(): void {
+		$this->expectException( Error::class );
+		$this->expectExceptionMessage( 'Call to undefined method ' . Hook::class . '::unknown()' );
+		call_user_func( array( Hook::class, 'unknown' ) );
 	}
 
 	public function for_hook_correctly_added(): array {

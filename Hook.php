@@ -9,70 +9,48 @@
 
 namespace ThemePlate;
 
+use Error;
 use ThemePlate\Hook\Handler;
 
+/**
+ * @method static bool return( string $tag, $value, int $priority = 10 )
+ * @method static bool append( string $tag, $value, int $priority = 10 )
+ * @method static bool prepend( string $tag, $value, int $priority = 10 )
+ * @method static bool pluck( string $tag, $value, int $priority = 10 )
+ * @method static bool replace( string $tag, $old, $new, int $priority = 10 )
+ * @method static bool insert( string $tag, $value, int $position, int $priority = 10 )
+ * @method static bool once( string $tag, array $value, int $priority = 10 )
+ */
 class Hook {
 
-	public static function return( string $tag, $value, int $priority = 10 ): bool {
+	public static function __callStatic( string $action, array $arguments ) {
 
-		return self::handler( 'return', $tag, $value, $priority );
+		if ( in_array( $action, array( ...Handler::ACTIONS, 'once' ), true ) ) {
+			$tag      = $arguments[0];
+			$value    = $arguments[1];
+			$priority = $arguments[2] ?? 10;
 
-	}
+			if ( 'once' === $action ) {
+				$value = compact( 'value', 'priority' );
+			}
 
-	public static function append( string $tag, $value, int $priority = 10 ): bool {
+			if ( in_array( $action, array( 'insert', 'replace' ), true ) ) {
+				$value    = array( $arguments[1], $arguments[2] );
+				$priority = $arguments[3] ?? 10;
+			}
 
-		return self::handler( 'append', $tag, $value, $priority );
+			return add_filter( $tag, array( new Handler( $value ), $action ), $priority );
+		}
 
-	}
-
-
-	public static function prepend( string $tag, $value, int $priority = 10 ): bool {
-
-		return self::handler( 'prepend', $tag, $value, $priority );
-
-	}
-
-
-	public static function pluck( string $tag, $value, int $priority = 10 ): bool {
-
-		return self::handler( 'pluck', $tag, $value, $priority );
+		throw new Error( 'Call to undefined method ' . __CLASS__ . '::' . $action . '()' );
 
 	}
-
-
-	public static function replace( string $tag, $old, $new, int $priority = 10 ): bool {
-
-		return self::handler( 'replace', $tag, array( $old, $new ), $priority );
-
-	}
-
-
-	public static function insert( string $tag, $value, int $position, int $priority = 10 ): bool {
-
-		return self::handler( 'insert', $tag, array( $value, $position ), $priority );
-
-	}
-
-
-	public static function once( string $tag, array $value, int $priority = 10 ): bool {
-
-		return self::handler( 'once', $tag, compact( 'value', 'priority' ), $priority );
-
-	}
-
 
 	public static function remove( string $tag, array $value, int $priority = 10 ): bool {
 
 		$handler = new Handler( compact( 'value', 'priority' ) );
 
 		return $handler->remove( $tag );
-
-	}
-
-
-	private static function handler( string $action, string $tag, $value, int $priority ): bool {
-
-		return add_filter( $tag, array( new Handler( $value ), $action ), $priority );
 
 	}
 
