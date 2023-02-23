@@ -10,6 +10,12 @@
 namespace ThemePlate\Hook;
 
 use Closure;
+use ThemePlate\Hook\Actions\AppendAction;
+use ThemePlate\Hook\Actions\InsertAction;
+use ThemePlate\Hook\Actions\PluckAction;
+use ThemePlate\Hook\Actions\PrependAction;
+use ThemePlate\Hook\Actions\ReplaceAction;
+use ThemePlate\Hook\Actions\ReturnAction;
 
 class Handler {
 
@@ -31,21 +37,7 @@ class Handler {
 
 	public function return() {
 
-		return $this->data;
-
-	}
-
-
-	protected function stringify( $data ): string {
-
-		if ( is_scalar( $data ) || null === $data ) {
-			$data = (string) $data;
-		} else {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
-			$data = json_encode( $data );
-		}
-
-		return $data;
+		return ( new ReturnAction( $this->data ) )->handle( null );
 
 	}
 
@@ -58,7 +50,7 @@ class Handler {
 			$data = $data[ $key ];
 		}
 
-		return $this->stringify( $data );
+		return Helper::stringify( $data );
 
 	}
 
@@ -69,13 +61,7 @@ class Handler {
 	 */
 	public function append( $values ) {
 
-		if ( is_array( $values ) ) {
-			$values[] = $this->data;
-		} elseif ( is_string( $values ) ) {
-			$values .= $this->stringy_data();
-		}
-
-		return $values;
+		return ( new AppendAction( $this->data ) )->handle( $values );
 
 	}
 
@@ -86,13 +72,7 @@ class Handler {
 	 */
 	public function prepend( $values ) {
 
-		if ( is_array( $values ) ) {
-			array_unshift( $values, $this->data );
-		} elseif ( is_string( $values ) ) {
-			$values = $this->stringy_data() . $values;
-		}
-
-		return $values;
+		return ( new PrependAction( $this->data ) )->handle( $values );
 
 	}
 
@@ -103,17 +83,7 @@ class Handler {
 	 */
 	public function pluck( $values ) {
 
-		if ( is_array( $values ) ) {
-			$index = array_search( $this->data, $values, true );
-
-			if ( false !== $index ) {
-				unset( $values[ $index ] );
-			}
-		} elseif ( is_string( $values ) ) {
-			$values = str_replace( $this->stringy_data(), '', $values );
-		}
-
-		return $values;
+		return ( new PluckAction( $this->data ) )->handle( $values );
 
 	}
 
@@ -124,20 +94,7 @@ class Handler {
 	 */
 	public function replace( $values ) {
 
-		if ( is_array( $values ) ) {
-			$index = array_search( $this->data[0], $values, true );
-
-			if ( false !== $index ) {
-				$values[ $index ] = $this->data[1];
-			}
-		} elseif ( is_string( $values ) ) {
-			$search  = is_array( $this->data[0] ) ? array_map( array( $this, 'stringify' ), $this->data[0] ) : $this->stringy_data( 0 );
-			$replace = is_array( $this->data[1] ) ? array_map( array( $this, 'stringify' ), $this->data[1] ) : $this->stringy_data( 1 );
-
-			$values = str_replace( $search, $replace, $values );
-		}
-
-		return $values;
+		return ( new ReplaceAction( $this->data ) )->handle( $values );
 
 	}
 
@@ -148,15 +105,7 @@ class Handler {
 	 */
 	public function insert( $values ) {
 
-		if ( is_array( $values ) ) {
-			array_splice( $values, $this->data[1], 0, $this->data[0] );
-		} elseif ( is_string( $values ) ) {
-			$replace = is_array( $this->data[0] ) ? array_map( array( $this, 'stringify' ), $this->data[0] ) : $this->stringy_data( 0 );
-
-			$values = substr_replace( $values, $replace, (int) $this->data[1], 0 );
-		}
-
-		return $values;
+		return ( new InsertAction( $this->data ) )->handle( $values );
 
 	}
 
