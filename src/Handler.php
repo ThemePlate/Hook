@@ -10,19 +10,31 @@
 namespace ThemePlate\Hook;
 
 use Closure;
-use ThemePlate\Hook\Actions\AppendAction;
-use ThemePlate\Hook\Actions\InsertAction;
-use ThemePlate\Hook\Actions\PluckAction;
-use ThemePlate\Hook\Actions\PrependAction;
-use ThemePlate\Hook\Actions\ReplaceAction;
-use ThemePlate\Hook\Actions\ReturnAction;
+use Error;
 
+/**
+ * @method mixed return( mixed $value )
+ * @method mixed append( mixed $value )
+ * @method mixed prepend( mixed $value )
+ * @method mixed pluck( mixed $value )
+ * @method mixed replace( mixed $value )
+ * @method mixed insert( mixed $value )
+ */
 class Handler {
 
 	/**
 	 * @var mixed
 	 */
-	private $data;
+	protected $data;
+
+	public const ACTIONS = array(
+		'return',
+		'append',
+		'prepend',
+		'pluck',
+		'replace',
+		'insert',
+	);
 
 
 	/**
@@ -35,64 +47,16 @@ class Handler {
 	}
 
 
-	public function return() {
+	public function __call( string $name, array $arguments ) {
 
-		return ( new ReturnAction( $this->data ) )->handle( null );
+		if ( in_array( $name, static::ACTIONS, true ) ) {
+			/** @var ActionInterface $class */
+			$class = __NAMESPACE__ . '\\Actions\\' . ucfirst( $name ) . 'Action';
 
-	}
+			return call_user_func_array( array( new $class( $this->data ), 'handle' ), $arguments );
+		}
 
-
-	/**
-	 * @param $values array|string
-	 * @return array|string
-	 */
-	public function append( $values ) {
-
-		return ( new AppendAction( $this->data ) )->handle( $values );
-
-	}
-
-
-	/**
-	 * @param $values array|string
-	 * @return array|string
-	 */
-	public function prepend( $values ) {
-
-		return ( new PrependAction( $this->data ) )->handle( $values );
-
-	}
-
-
-	/**
-	 * @param $values array|string
-	 * @return array|string
-	 */
-	public function pluck( $values ) {
-
-		return ( new PluckAction( $this->data ) )->handle( $values );
-
-	}
-
-
-	/**
-	 * @param $values array|string
-	 * @return array|string
-	 */
-	public function replace( $values ) {
-
-		return ( new ReplaceAction( $this->data ) )->handle( $values );
-
-	}
-
-
-	/**
-	 * @param $values array|string
-	 * @return array|string
-	 */
-	public function insert( $values ) {
-
-		return ( new InsertAction( $this->data ) )->handle( $values );
+		throw new Error( 'Call to undefined method ' . __CLASS__ . '::' . $name . '()' );
 
 	}
 
@@ -153,9 +117,10 @@ class Handler {
 				continue;
 			}
 
+			/** @var Handler $filter_instance */
 			$filter_instance = $filter['function'][0];
 			$filter_action   = $filter['function'][1];
-			$filter_data     = $filter_instance->return();
+			$filter_data     = $filter_instance->return( null );
 
 			if (
 				( $wanted_action === $filter_action && $wanted_value === $filter_data ) ||

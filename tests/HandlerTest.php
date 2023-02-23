@@ -6,6 +6,7 @@
 
 namespace Tests;
 
+use Error;
 use stdClass;
 use ThemePlate\Hook\Handler;
 use WP_UnitTestCase;
@@ -13,15 +14,13 @@ use WP_UnitTestCase;
 class HandlerTest extends WP_UnitTestCase {
 	public const HOOK = 'test_hook';
 
-	public const ACTIONS = array(
-		'return',
-		'append',
-		'prepend',
-		'pluck',
-		'replace',
-		'insert',
-		'once',
-	);
+	public function test_unknown_action(): void {
+		$this->expectException( Error::class );
+		$this->expectExceptionMessage( 'Call to undefined method ' . Handler::class . '::unknown()' );
+
+		add_filter( self::HOOK, array( new Handler( 'test' ), 'unknown' ) );
+		apply_filters( self::HOOK, 'test' );
+	}
 
 	public function for_return(): array {
 		return array(
@@ -210,7 +209,7 @@ class HandlerTest extends WP_UnitTestCase {
 	public function for_once(): array {
 		$data = array();
 
-		foreach ( array_slice( self::ACTIONS, 0, -1 ) as $action ) {
+		foreach ( Handler::ACTIONS as $action ) {
 			$method = 'for_' . $action;
 			$data[] = array_map(
 				function( $value ) use ( $action ) {
@@ -244,7 +243,7 @@ class HandlerTest extends WP_UnitTestCase {
 	public function for_remove(): array {
 		$data = array();
 
-		foreach ( self::ACTIONS as $action ) {
+		foreach ( array( ...Handler::ACTIONS, 'once' ) as $action ) {
 			$method = 'for_' . $action;
 			$data[] = array_map(
 				function( $value ) use ( $action ) {
