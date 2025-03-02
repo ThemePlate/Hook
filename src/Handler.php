@@ -50,13 +50,12 @@ class Handler {
 	public function __call( string $name, array $arguments ) {
 
 		if ( in_array( $name, static::ACTIONS, true ) ) {
-			/** @var ActionInterface $class */
 			$class = __NAMESPACE__ . '\\Actions\\' . ucfirst( $name ) . 'Action';
 
 			return call_user_func_array( array( new $class( $this->data ), 'handle' ), $arguments );
 		}
 
-		throw new Error( 'Call to undefined method ' . __CLASS__ . '::' . $name . '()' );
+		throw new Error( esc_html( 'Call to undefined method ' . __CLASS__ . '::' . $name . '()' ) );
 
 	}
 
